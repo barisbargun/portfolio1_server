@@ -3,6 +3,7 @@ import promise from 'es6-promise' // For await fetch
 import express, { Router } from 'express'
 import helmet from 'helmet'
 import { StatusCodes } from 'http-status-codes'
+import morgan from 'morgan'
 import serverless from 'serverless-http'
 
 import { corsOptions } from '@/config/cors-options'
@@ -15,6 +16,7 @@ promise.polyfill()
 
 const app = express()
 app.disable('x-powered-by')
+app.use(morgan('tiny'))
 app.use(limiter)
 app.use(helmet())
 app.use(credentials)
