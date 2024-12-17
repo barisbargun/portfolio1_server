@@ -1,22 +1,21 @@
 import nodemailer from 'nodemailer'
 
-import { env } from './env'
+export const transporter = (email: string, password: string) =>
+  nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: email,
+      pass: password
+    }
+  })
 
-export const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: env.EMAIL,
-    pass: env.PASSWORD
-  }
-})
-
-export const mailOptions = (email: string, name: string, message: string) => {
+export const mailOptions = (senderEmail: string, email: string, name: string, message: string) => {
   return {
-    from: env.EMAIL,
-    to: env.EMAIL,
+    from: senderEmail,
+    to: senderEmail,
     subject: 'From Portfolio',
     text: `Sender: ${email}\nName:${name}\n\n${message}`
   }

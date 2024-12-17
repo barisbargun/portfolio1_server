@@ -43,13 +43,16 @@ router.post('/', verifyRecaptcha(), (req, res) => {
 
   if (!email || !name || !message) return res.sendStatus(StatusCodes.NO_CONTENT)
 
-  transporter.sendMail(mailOptions(email, name, message), function (error) {
-    if (error) {
-      return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR)
-    } else {
-      return res.sendStatus(StatusCodes.OK)
+  transporter(env.EMAIL, env.PASSWORD).sendMail(
+    mailOptions(env.EMAIL, email, name, message),
+    function (error) {
+      if (error) {
+        return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR)
+      } else {
+        return res.sendStatus(StatusCodes.OK)
+      }
     }
-  })
+  )
 })
 
 app.use('/api/', router)
