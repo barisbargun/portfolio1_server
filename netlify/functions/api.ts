@@ -1,29 +1,39 @@
 import cors from 'cors'
-import promise from 'es6-promise' // For await fetch
+import promise from 'es6-promise'
 import express, { Router } from 'express'
 import helmet from 'helmet'
 import { StatusCodes } from 'http-status-codes'
 import morgan from 'morgan'
 import serverless from 'serverless-http'
 
-import { corsOptions } from '@/config/cors-options'
+import { env } from '@/config/env'
 import { limiter } from '@/config/limiter'
 import { mailOptions, transporter } from '@/config/mail'
-import { credentials } from '@/middlewares/credentials'
+import { checkCors } from '@/middlewares/check-cors'
 import { verifyRecaptcha } from '@/middlewares/verify-recaptcha'
 
 promise.polyfill()
 
 const app = express()
 app.disable('x-powered-by')
-app.use(morgan('tiny'))
-app.use(limiter)
-app.use(helmet())
-app.use(credentials)
-app.use(cors(corsOptions))
 
+app.use(morgan('tiny'))
+
+app.use(limiter)
+
+app.use(helmet())
+app.use(checkCors)
+app.use(
+  cors({
+    credentials: true,
+    origin: env.CLIENT_URL,
+    methods: ['POST'],
+    optionsSuccessStatus: 200
+  })
+)
+
+app.use(express.json({ limit: '4kb' }))
 app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
 const router = Router()
 
 // @ts-expect-error - OK
