@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
+import { StatusCodes } from 'http-status-codes'
 
 export const verifyRecaptcha = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +18,7 @@ export const verifyRecaptcha = () => {
         throw new Error(`Error in Google Siteverify API. ${err.message}`)
       })
     if (token === null || !isHuman) {
-      return res.status(StatusCodes.FORBIDDEN).json({ message: ReasonPhrases.FORBIDDEN })
+      return res.sendStatus(StatusCodes.FORBIDDEN)
     }
     next()
   }
